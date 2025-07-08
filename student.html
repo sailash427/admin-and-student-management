@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin & Student Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-200 min-h-screen">
+  <!-- Header for logged-in users -->
+  <header id="header" class="hidden bg-blue-600 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold">Admin & Student Portal</h1>
+      <div>
+        <span id="user-name" class="mr-4"></span>
+        <button onclick="confirmLogout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="app" class="container mx-auto p-4 max-w-4xl">
+    <!-- Loading Overlay -->
+    <div id="loading" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-4 rounded shadow-lg">
+        <p class="text-lg font-semibold">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Admin Login Page -->
+    <div id="login-page" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Admin Login</h2>
+      <div id="login-error" class="hidden text-red-500 mb-4 text-sm"></div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Email</label>
+        <input id="login-email" type="email" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-1">Password</label>
+        <input id="login-password" type="password" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <button onclick="handleLogin()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Login</button>
+      <p class="mt-4 text-center text-sm">Don't have an account? <a href="#" onclick="showSignup()" class="text-blue-500 hover:underline">Sign Up</a></p>
+      <p class="mt-2 text-center text-sm">Student? <a href="#" onclick="showStudentLogin()" class="text-blue-500 hover:underline">Student Login</a></p>
+    </div>
+
+    <!-- Admin Signup Page -->
+    <div id="signup-page" class="hidden max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Admin Signup</h2>
+      <div id="signup-error" class="hidden text-red-500 mb-4 text-sm"></div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Name</label>
+        <input id="signup-name" type="text" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Email</label>
+        <input id="signup-email" type="email" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Phone</label>
+        <input id="signup-phone" type="tel" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-1">Password</label>
+        <input id="signup-password" type="password" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <button onclick="handleSignup()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Sign Up</button>
+      <p class="mt-4 text-center text-sm">Already have an account? <a href="#" onclick="showLogin()" class="text-blue-500 hover:underline">Login</a></p>
+    </div>
+
+    <!-- Student Login Page -->
+    <div id="student-login-page" class="hidden max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Student Login</h2>
+      <div id="student-login-error" class="hidden text-red-500 mb-4 text-sm"></div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Email</label>
+        <input id="student-login-email" type="email" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-1">Student ID</label>
+        <input id="student-login-id" type="text" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <button onclick="handleStudentLogin()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Login</button>
+      <p class="mt-4 text-center text-sm">Admin? <a href="#" onclick="showLogin()" class="text-blue-500 hover:underline">Admin Login</a></p>
+    </div>
+
+    <!-- Admin Profile Page -->
+    <div id="admin-profile-page" class="hidden max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Admin Profile</h2>
+      <div id="admin-profile-error" class="hidden text-red-500 mb-4 text-sm"></div>
+      <div id="admin-profile-info" class="mb-6 space-y-2"></div>
+      <button onclick="showAddStudent()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600 transition mb-2">Add Student</button>
+    </div>
+
+    <!-- Add Student Page -->
+    <div id="add-student-page" class="hidden max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Add Student</h2>
+      <div id="add-student-error" class="hidden text-red-500 mb-4 text-sm"></div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Name</label>
+        <input id="student-name" type="text" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Email</label>
+        <input id="student-email" type="email" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Student ID</label>
+        <input id="student-id" type="text" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Phone</label>
+        <input id="student-phone" type="tel" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Branch</label>
+        <input id="student-branch" type="text" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Department</label>
+        <input id="student-department" type="text" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-1">Date of Birth</label>
+        <input id="student-dob" type="date" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <button onclick="handleAddStudent()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Add Student</button>
+      <button onclick="showAdminProfile()" class="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition mt-2">Back to Profile</button>
+    </div>
+
+    <!-- Student Profile Page -->
+    <div id="student-profile-page" class="hidden max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Student Profile</h2>
+      <div id="student-profile-error" class="hidden text-red-500 mb-4 text-sm"></div>
+      <div id="student-profile-info" class="mb-6 space-y-2"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:3000/api';
+
+    function showLoading(show) {
+      document.getElementById('loading').classList.toggle('hidden', !show);
+    }
+
+    function showHeader(show, name = '') {
+      const header = document.getElementById('header');
+      header.classList.toggle('hidden', !show);
+      document.getElementById('user-name').textContent = name ? `Welcome, ${name}` : '';
+    }
+
+    function showLogin() {
+      document.getElementById('login-page').classList.remove('hidden');
+      document.getElementById('signup-page').classList.add('hidden');
+      document.getElementById('student-login-page').classList.add('hidden');
+      document.getElementById('admin-profile-page').classList.add('hidden');
+      document.getElementById('add-student-page').classList.add('hidden');
+      document.getElementById('student-profile-page').classList.add('hidden');
+      showHeader(false);
+      clearErrors();
+    }
+
+    function showSignup() {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('signup-page').classList.remove('hidden');
+      document.getElementById('student-login-page').classList.add('hidden');
+      document.getElementById('admin-profile-page').classList.add('hidden');
+      document.getElementById('add-student-page').classList.add('hidden');
+      document.getElementById('student-profile-page').classList.add('hidden');
+      showHeader(false);
+      clearErrors();
+    }
+
+    function showStudentLogin() {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('signup-page').classList.add('hidden');
+      document.getElementById('student-login-page').classList.remove('hidden');
+      document.getElementById('admin-profile-page').classList.add('hidden');
+      document.getElementById('add-student-page').classList.add('hidden');
+      document.getElementById('student-profile-page').classList.add('hidden');
+      showHeader(false);
+      clearErrors();
+    }
+
+    function showAdminProfile() {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('signup-page').classList.add('hidden');
+      document.getElementById('student-login-page').classList.add('hidden');
+      document.getElementById('admin-profile-page').classList.remove('hidden');
+      document.getElementById('add-student-page').classList.add('hidden');
+      document.getElementById('student-profile-page').classList.add('hidden');
+      clearErrors();
+      fetchAdminProfile();
+    }
+
+    function showAddStudent() {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('signup-page').classList.add('hidden');
+      document.getElementById('student-login-page').classList.add('hidden');
+      document.getElementById('admin-profile-page').classList.add('hidden');
+      document.getElementById('add-student-page').classList.remove('hidden');
+      document.getElementById('student-profile-page').classList.add('hidden');
+      clearErrors();
+    }
+
+    function showStudentProfile() {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('signup-page').classList.add('hidden');
+      document.getElementById('student-login-page').classList.add('hidden');
+      document.getElementById('admin-profile-page').classList.add('hidden');
+      document.getElementById('add-student-page').classList.add('hidden');
+      document.getElementById('student-profile-page').classList.remove('hidden');
+      clearErrors();
+      fetchStudentProfile();
+    }
+
+    function clearErrors() {
+      document.getElementById('login-error').classList.add('hidden');
+      document.getElementById('signup-error').classList.add('hidden');
+      document.getElementById('student-login-error').classList.add('hidden');
+      document.getElementById('admin-profile-error').classList.add('hidden');
+      document.getElementById('add-student-error').classList.add('hidden');
+      document.getElementById('student-profile-error').classList.add('hidden');
+    }
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validatePhone(phone) {
+      return /^\+?[\d\s-]{10,15}$/.test(phone);
+    }
+
+    function validateName(name) {
+      return name.trim().length >= 2;
+    }
+
+    function validatePassword(password) {
+      return password.length >= 6;
+    }
+
+    function validateStudentId(studentId) {
+      return studentId.trim().length >= 3;
+    }
+
+    function validateText(text) {
+      return text.trim().length >= 1;
+    }
+
+    function validateDate(dob) {
+      const date = new Date(dob);
+      return date instanceof Date && !isNaN(date);
+    }
+
+    async function handleSignup() {
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const phone = document.getElementById('signup-phone').value;
+      const password = document.getElementById('signup-password').value;
+      const errorDiv = document.getElementById('signup-error');
+
+      if (!validateName(name)) {
+        errorDiv.textContent = 'Name must be at least 2 characters long';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateEmail(email)) {
+        errorDiv.textContent = 'Invalid email format';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validatePhone(phone)) {
+        errorDiv.textContent = 'Invalid phone number';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validatePassword(password)) {
+        errorDiv.textContent = 'Password must be at least 6 characters long';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/admin/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone, password })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', 'admin');
+        showAdminProfile();
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+
+      if (!validateEmail(email)) {
+        errorDiv.textContent = 'Invalid email format';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validatePassword(password)) {
+        errorDiv.textContent = 'Password must be at least 6 characters long';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/admin/signin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', 'admin');
+        showAdminProfile();
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function handleStudentLogin() {
+      const email = document.getElementById('student-login-email').value;
+      const studentId = document.getElementById('student-login-id').value;
+      const errorDiv = document.getElementById('student-login-error');
+
+      if (!validateEmail(email)) {
+        errorDiv.textContent = 'Invalid email format';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateStudentId(studentId)) {
+        errorDiv.textContent = 'Student ID must be at least 3 characters long';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/student/signin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, studentId })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', 'student');
+        showStudentProfile();
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function handleAddStudent() {
+      const name = document.getElementById('student-name').value;
+      const email = document.getElementById('student-email').value;
+      const studentId = document.getElementById('student-id').value;
+      const phone = document.getElementById('student-phone').value;
+      const branch = document.getElementById('student-branch').value;
+      const department = document.getElementById('student-department').value;
+      const dob = document.getElementById('student-dob').value;
+      const errorDiv = document.getElementById('add-student-error');
+      const token = localStorage.getItem('token');
+
+      if (!validateName(name)) {
+        errorDiv.textContent = 'Name must be at least 2 characters long';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateEmail(email)) {
+        errorDiv.textContent = 'Invalid email format';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateStudentId(studentId)) {
+        errorDiv.textContent = 'Student ID must be at least 3 characters long';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validatePhone(phone)) {
+        errorDiv.textContent = 'Invalid phone number';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateText(branch)) {
+        errorDiv.textContent = 'Branch is required';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateText(department)) {
+        errorDiv.textContent = 'Department is required';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      if (!validateDate(dob)) {
+        errorDiv.textContent = 'Invalid date of birth';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/admin/student`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ name, email, studentId, phone, branch, department, dob })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        alert('Student added successfully');
+        showAdminProfile();
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function fetchAdminProfile() {
+      const token = localStorage.getItem('token');
+      const errorDiv = document.getElementById('admin-profile-error');
+      const profileInfo = document.getElementById('admin-profile-info');
+
+      if (!token) {
+        showLogin();
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/admin/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        profileInfo.innerHTML = `
+          <p><strong>Name:</strong> ${data.admin.name}</p>
+          <p><strong>Email:</strong> ${data.admin.email}</p>
+          <p><strong>Phone:</strong> ${data.admin.phone}</p>
+          <p><strong>Role:</strong> ${data.admin.role}</p>
+        `;
+        showHeader(true, data.admin.name);
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        showLogin();
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function fetchStudentProfile() {
+      const token = localStorage.getItem('token');
+      const errorDiv = document.getElementById('student-profile-error');
+      const profileInfo = document.getElementById('student-profile-info');
+
+      if (!token) {
+        showStudentLogin();
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/student/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        profileInfo.innerHTML = `
+          <p><strong>Name:</strong> ${data.student.name}</p>
+          <p><strong>Email:</strong> ${data.student.email}</p>
+          <p><strong>Student ID:</strong> ${data.student.studentId}</p>
+          <p><strong>Phone:</strong> ${data.student.phone}</p>
+          <p><strong>Branch:</strong> ${data.student.branch}</p>
+          <p><strong>Department:</strong> ${data.student.department}</p>
+          <p><strong>Date of Birth:</strong> ${new Date(data.student.dob).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        `;
+        showHeader(true, data.student.name);
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        showStudentLogin();
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function confirmLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        handleLogout();
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      showLogin();
+    }
+
+    // Check for token and role on page load
+    if (localStorage.getItem('token')) {
+      const role = localStorage.getItem('role');
+      if (role === 'admin') {
+        showAdminProfile();
+      } else if (role === 'student') {
+        showStudentProfile();
+      } else {
+        showLogin();
+      }
+    } else {
+      showLogin();
+    }
+  </script>
+</body>
+</html>
